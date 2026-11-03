@@ -79,7 +79,7 @@ function amm_register_settings() {
         'get_amm_alert_message',            // function that fills the field with form output; function should echo its output
         'alert-message-manager',            // slug-name of page on which to show the section
         'amm_settings'                      // settings section the field goes in
-        )                     
+        );                     
    
 }
 add_action( 'admin_init', 'amm_register_settings' );
