@@ -118,5 +118,3 @@ function amm_plugin_options() {
     <?php
 
 }
-
-
