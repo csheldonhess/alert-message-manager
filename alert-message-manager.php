@@ -62,7 +62,7 @@ add_action( 'admin_menu', 'amm_plugin_menu' );
 function amm_register_settings() {
     register_setting(
         'amm_settings_group',               // Option group (must match settings_fields())
-        'amm_plugin_options',               // Option name in wp_options, will be santitized
+        'amm_plugin_options',               // Option name in wp_options (array), will be santitized
         'amm_plugin_sanitize'               // Sanitization callback
     );
     
@@ -78,6 +78,7 @@ function amm_register_settings() {
         'Alert Message',                    // formatted title of the field, shown as label during output
         'get_amm_alert_message',            // function that fills the field with form output; function should echo its output
         'alert-message-manager',            // slug-name of page on which to show the section
+        'amm_settings'                      // settings section the field goes in
         )                     
    
 }
