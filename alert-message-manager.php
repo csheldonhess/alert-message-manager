@@ -15,9 +15,10 @@ defined('ABSPATH') || exit;
 function write_alert_message() {
 
     $options = get_option( 'amm_plugin_options', [] );
+
     // print the alert message if it's been set to "active"
-    if (/*$options["alert_message_active"] == "true" 
-        && */is_page( [ 'home', 'general-email-form', 'library-research-question-form', 'hours', 'reserve-a-room', 'contact-us', 'ask-us', 'peer-research-mentors', 'how-to-print' ] )
+    if ($options["alert_message_active"] == "true" 
+        && is_page( [ 'home', 'general-email-form', 'library-research-question-form', 'hours', 'reserve-a-room', 'contact-us', 'ask-us', 'peer-research-mentors', 'how-to-print' ] )
         && empty( $_COOKIE['lib_notification_dismissed'] )) {
           ?>
           <div class="notification notification-global">
@@ -34,7 +35,7 @@ function write_alert_message() {
         <?php
     }
 }
-// add_action actually does the printing, currently above the header
+// add_action actually does the printing
 // (alert_message_hook() is in header.php)
 add_action( 'alert_message_hook', 'write_alert_message' );
 
@@ -79,7 +80,16 @@ function amm_register_settings() {
         'get_amm_alert_message',            // function that fills the field with form output; function should echo its output
         'alert-message-manager',            // slug-name of page on which to show the section
         'amm_settings'                      // settings section the field goes in
-        );                     
+        );      
+
+    add_settings_field(
+        'alert_message_active',
+        'Alert message: active?',
+        'get_amm_alert_status',
+        'alert-message-manager',
+        'amm_settings',
+        ['label_for' => 'alert_msg_active']
+    );               
    
 }
 add_action( 'admin_init', 'amm_register_settings' );
@@ -94,11 +104,22 @@ function get_amm_alert_message() {
            value="' . esc_attr( $value ) . '" class="regular-text" />';
 }
 
+// fills alert_message_active field via checkbox ("true" if checked)
+function get_amm_alert_status() {
+    $options = get_option( 'amm_plugin_options', [] );
+    $value   = isset( $options['alert_message_active'] ) ? $options['alert_message_active'] : '';
+    echo '<input type="checkbox" id="alert_msg_active" value="true" name="amm_plugin_options[alert_message_active]"' . checked( $value, "true", false)  . '  />';
+}
+
 // sanitizes the alert message; called by register_setting()
 function amm_plugin_sanitize( $input ) {
     $clean = [];
     if ( isset( $input['alert_message'] ) ) {
         $clean['alert_message'] = sanitize_text_field( $input['alert_message'] );
+    }
+    // we could honestly just pass the value through without sanitization...
+    if ( isset( $input['alert_message_active'] ) ) {
+        $clean['alert_message_active'] = sanitize_text_field( $input['alert_message_active'] );
     }
     return $clean;
 }
